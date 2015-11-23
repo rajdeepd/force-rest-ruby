@@ -13,6 +13,7 @@ Create a config.yml file from config_sample.yml file and fill in the values appr
 
 Update the TODO with appropriate values for client_id, client_secret username and password.
 
+::
 
 	credentials:
 	    client_id: TODO
@@ -33,24 +34,25 @@ File `util.rb` provides common methods for getting access token. Getting access 
 * Extract the access_token and return it
 
 
-```ruby
-def Util.get_access_token()
-	credentials = YAML.load(File.open("./config.yml"))['credentials']
-	uri = URI('https://ap2.salesforce.com//services/oauth2/token')
-	http = Net::HTTP.new(uri.host, uri.port)
-	http.use_ssl = true
+.. code-block:: ruby
 
-	res = Net::HTTP.post_form(uri, 'grant_type' => 'password',
-			               'client_id' => credentials['client_id'],
-		                       'client_secret' => credentials['client_secret'],
-		                       'username' => credentials['username'],
-		                       'password' => credentials['password'])
-	result = res.body
-	parsed = JSON.parse(result) 
-        access_token = parsed['access_token']
-	return access_token
-end
-```
+	def Util.get_access_token()
+		credentials = YAML.load(File.open("./config.yml"))['credentials']
+		uri = URI('https://ap2.salesforce.com//services/oauth2/token')
+		http = Net::HTTP.new(uri.host, uri.port)
+		http.use_ssl = true
+
+		res = Net::HTTP.post_form(uri, 'grant_type' => 'password',
+					       'client_id' => credentials['client_id'],
+				               'client_secret' => credentials['client_secret'],
+				               'username' => credentials['username'],
+				               'password' => credentials['password'])
+		result = res.body
+		parsed = JSON.parse(result) 
+		access_token = parsed['access_token']
+		return access_token
+	end
+
 
 Get Account List
 ================
