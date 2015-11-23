@@ -26,6 +26,9 @@ Common Methods
 ==============
 File `util.rb` provides common methods for getting access token. Getting access token consists of following steps
 
+Get Access Token
+^^^^^^^^^^^^^^^^
+
 * Load Credentials from config.yml
 * Connect to the OAuth2 token url
 * Create a new HTTP object
@@ -53,6 +56,34 @@ File `util.rb` provides common methods for getting access token. Getting access 
 		return access_token
 	end
 
+Get List of SObjects
+^^^^^^^^^^^^^^^^^^^^
+Url used to make request depends on the instance where your account was created ( na1, na2, ap1, ap2 etc) as well the version of the API being used.
+We are using the base url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/`. The function Util.get_sobject_list(object_name) takes the object name for which list has to be created (Account, Contact etc).
 
+.. code-block:: ruby
+
+	def Util.get_sobject_list(object_name)
+		access_token = Util.get_access_token()
+		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+		http = Net::HTTP.new(uri.host, uri.port)
+		request = Net::HTTP::Get.new(uri.request_uri)
+		http.use_ssl = true
+
+		#'Authorization': 'Bearer ' + access_token
+		request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+		response = http.request(request)
+		parsed_response =  JSON.parse(response.body)
+		return parsed_response
+	end
 Get Account List
 ================
+We created a new method in :code:`util.rb` :code:`Util.get_sobject_list(object_name)`. In this method we get the access token from  Util.get_access_token() and use it make a POST request to the url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/Account`.
+
+.. code-block:: ruby
+
+	response = Util.get_sobject_list('Account')
+	pp response
+
+
+
