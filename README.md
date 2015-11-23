@@ -14,6 +14,7 @@ Create a config.yml file from config_sample.yml file and fill in the values appr
 Update the TODO with appropriate values for client_id, client_secret username and password.
 
 ::
+
 	credentials:
 	    client_id: TODO
             client_secret: TODO
