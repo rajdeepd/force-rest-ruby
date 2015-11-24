@@ -104,6 +104,7 @@ Detailed steps
 
 	access_token = Util.get_access_token()
 
+
 2. Create a URI object :code:`uri` based on the object_name
 
 3. Create a new :code:`Net:HTTP` object based in the :code:`uri`
