@@ -78,12 +78,82 @@ We are using the base url :code:`https://ap2.salesforce.com/services/data/v34.0/
 	end
 Get Account List
 ================
-We created a new method in :code:`util.rb` :code:`Util.get_sobject_list(object_name)`. In this method we get the access token from  Util.get_access_token() and use it make a POST request to the url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/Account`.
+We created a new method in :code:`util.rb` :code:`Util.get_sobject_list(object_name)`. In this method we get the access token from  :code:`Util.get_access_token()` and use it make a POST request to the url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/Account`.
 
 .. code-block:: ruby
 
 	response = Util.get_sobject_list('Account')
 	pp response
 
+Exectute the program 
+
+::
+
+	$ ruby get_account_list.rb
+
+Output will be similar to the listing below
+
+Create Account
+==============
+We added a new method in :code:`util.rb`, :code:`Util.create_sobject(object_name, data)`. This method takes two parameters. :code:`object_name` which is the sobject name we want to create, and :code:`data` which is data object to be sent in json format. 
+
+Detailed steps
+
+1. Get access token
+ 
+   ..code-block:: ruby
+
+	access_token = Util.get_access_token()
+
+2. Create a URI object :code:`uri` based on the object_name
+
+3. Create a new :code:`Net:HTTP` object based in the :code:`uri`
+
+4. Create a POST request object
+
+5. Make sure the http object is set to user ssl
+
+6. Set up the request's header to include :code:`access_token` as shown below
+
+   ..code-block:: ruby
+
+	request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+
+7. Check for Object_Name to be of type :code:`Account`
+
+8. Make a Post Request
+
+ ..code-block:: ruby
+
+	request.body = data.to_json
+	res = http.request(request)
+	return res
+
+Full code Listing of the method
+
+.. code-block:: ruby
+
+	def Util.create_sobject(object_name, data)
+		access_token = Util.get_access_token()
+
+		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+		puts uri
+		http = Net::HTTP.new(uri.host, uri.port)
+
+		request = Net::HTTP::Post.new(uri.request_uri)
+		http.use_ssl = true
+		request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+		request['Content-Type'] = 'application/json'
+		request['Accept'] = 'application/json'
+		name = ''
+		if object_name == 'Account'
+			request.body = data.to_json
+			res = http.request(request)
+			return res
+		else
+			puts 'name not defined'
+			return Nil
+		end
+	end
 
 
