@@ -98,9 +98,9 @@ We added a new method in :code:`util.rb`, :code:`Util.create_sobject(object_name
 
 Detailed steps
 
-Get access token
+1.Get access token
  
-..code-block:: ruby
+  .. code-block:: ruby
 
 	access_token = Util.get_access_token()
 
@@ -115,7 +115,7 @@ Get access token
 
 6. Set up the request's header to include :code:`access_token` as shown below
 
-..code-block:: ruby
+  .. code-block:: ruby
 
   request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
 
@@ -123,7 +123,7 @@ Get access token
 
 8. Make a Post Request
 
- ..code-block:: ruby
+   .. code-block:: ruby
 
 	request.body = data.to_json
 	res = http.request(request)
