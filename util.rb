@@ -49,15 +49,8 @@ module Util
         request['Accept'] = 'application/json'
         name = ''
         if object_name == 'Account'
-        	name = data['name']
-        end
-        if name != ''
-	        request.body = {
-	  			"name" => name
-				}.to_json    
-			puts request.body
-			res = http.request(request)
-		
+        	request.body = data.to_json
+        	res = http.request(request)
 			return res
 		else
 			puts 'name not defined'
