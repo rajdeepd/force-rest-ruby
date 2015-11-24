@@ -91,7 +91,6 @@ Exectute the program
 
 	$ ruby get_account_list.rb
 
-Output will be similar to the listing below
 
 Create Account
 ==============
@@ -115,7 +114,7 @@ Detailed steps
 
 6. Set up the request's header to include :code:`access_token` as shown below
 
-   ..code-block:: ruby
+..code-block:: ruby
 
 	request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
 
