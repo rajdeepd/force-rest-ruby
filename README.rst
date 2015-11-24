@@ -98,7 +98,7 @@ We added a new method in :code:`util.rb`, :code:`Util.create_sobject(object_name
 
 Detailed steps
 
-1. Get access token
+Get access token
  
 ..code-block:: ruby
 
