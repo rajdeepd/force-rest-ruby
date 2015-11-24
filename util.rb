@@ -34,4 +34,37 @@ module Util
 		parsed_response =  JSON.parse(response.body)
 		return parsed_response
 	end
+
+	def Util.create_sobject(object_name, data)
+		access_token = Util.get_access_token()
+
+		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+		puts uri
+		http = Net::HTTP.new(uri.host, uri.port)
+
+		request = Net::HTTP::Post.new(uri.request_uri)
+		http.use_ssl = true
+		request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+		request['Content-Type'] = 'application/json'
+        request['Accept'] = 'application/json'
+        name = ''
+        puts object_name == 'Account'
+        if object_name == 'Account'
+        	puts 1
+        	name = data['name']
+        	puts name
+        end
+        if name != ''
+	        request.body = {
+	  			"name" => name
+				}.to_json    
+			puts request.body
+			res = http.request(request)
+		
+			return res
+		else
+			puts 'name not defined'
+			return Nil
+		end
+	end
 end
