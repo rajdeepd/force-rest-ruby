@@ -48,11 +48,8 @@ module Util
 		request['Content-Type'] = 'application/json'
         request['Accept'] = 'application/json'
         name = ''
-        puts object_name == 'Account'
         if object_name == 'Account'
-        	puts 1
         	name = data['name']
-        	puts name
         end
         if name != ''
 	        request.body = {
