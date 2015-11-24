@@ -100,7 +100,7 @@ Detailed steps
 
 1. Get access token
  
-   ..code-block:: ruby
+..code-block:: ruby
 
 	access_token = Util.get_access_token()
 
@@ -116,7 +116,7 @@ Detailed steps
 
 ..code-block:: ruby
 
-	request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+  request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
 
 7. Check for Object_Name to be of type :code:`Account`
 
