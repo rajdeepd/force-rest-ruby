@@ -105,7 +105,7 @@ Detailed steps
  
   .. code-block:: ruby
 
-	access_token = self.get_access_token()
+	 access_token = self.get_access_token()
 
 
 2. Create a URI object :code:`uri` based on the object_name
@@ -120,7 +120,7 @@ Detailed steps
 
   .. code-block:: ruby
 
-  request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+      request.initialize_http_header({"Authorization" => "Bearer " + access_token})
 
 7. Check for Object_Name to be of type :code:`Account`
 
@@ -128,9 +128,9 @@ Detailed steps
 
    .. code-block:: ruby
 
-	request.body = data.to_json
-	res = http.request(request)
-	return res
+      request.body = data.to_json
+      res = http.request(request)
+      return res
 
 Full code Listing of the method
 
@@ -159,9 +159,10 @@ Full code Listing of the method
 		end
 	end
 
-The method listed above is called as shown in the listing below in the file :code:`create_acciunt.rb`
+The method listed above is called as shown in the listing below in the file :code:`create_account.rb`
 
 .. code-block:: ruby
+
   class CreateAccount
     def execute
       data = Hash.new
@@ -170,7 +171,6 @@ The method listed above is called as shown in the listing below in the file :cod
       puts response.body
     end
    end
-
-   createAccount = CreateAccount.new
-   createAccount.execute
+  createAccount = CreateAccount.new
+  createAccount.execute
 
