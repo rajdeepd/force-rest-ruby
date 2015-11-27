@@ -41,7 +41,7 @@ Get Access Token
 
 	def self.get_access_token()
 		credentials = YAML.load(File.open("./config.yml"))['credentials']
-		uri = URI('https://ap2.salesforce.com//services/oauth2/token')
+		uri = URI(@@access_url)
 		http = Net::HTTP.new(uri.host, uri.port)
 		http.use_ssl = true
 
@@ -59,7 +59,7 @@ Get Access Token
 Get List of SObjects
 ^^^^^^^^^^^^^^^^^^^^
 Url used to make request depends on the instance where your account was created ( na1, na2, ap1, ap2 etc) as well the version of the API being used.
-We are using the base url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/`.
+We are using the base url :code:`https://ap2.salesforce.com/services/data/v35.0/sobjects/`.
 
 The function :code:`self.get_sobject_list(object_name)` takes the object name for which list has to be created (Account, Contact etc). A HTTPs Get request is made
 to the URL listed above appended by the :code:`object_name`. Header of the HTTP request has Access token set
@@ -70,7 +70,7 @@ to the URL listed above appended by the :code:`object_name`. Header of the HTTP 
     def self.get_sobject_list(object_name)
       access_token = Util.get_access_token
 
-      uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+      uri = URI(@@base_url + object_name)
       http = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       http.use_ssl = true
@@ -148,7 +148,7 @@ Full code Listing of the method
 	def self.create_sobject(object_name, data)
 		access_token = Util.get_access_token()
 
-		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+		uri = URI(@@base_url + object_name)
 		puts uri
 		http = Net::HTTP.new(uri.host, uri.port)
 
