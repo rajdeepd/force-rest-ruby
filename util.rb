@@ -2,8 +2,11 @@ require 'net/http'
 require 'yaml'
 require 'json'
 
-module Util
-	def Util.get_access_token()
+
+class Util
+	@@base_url = 'https://ap2.salesforce.com/services'
+
+	def self.get_access_token
 		credentials = YAML.load(File.open("./config.yml"))['credentials']
 		uri = URI('https://ap2.salesforce.com//services/oauth2/token')
 		http = Net::HTTP.new(uri.host, uri.port)
@@ -20,8 +23,8 @@ module Util
 		return access_token
 	end
 
-	def Util.get_sobject_list(object_name)
-		access_token = Util.get_access_token()
+	def self.get_sobject_list(object_name)
+		access_token = Util.get_access_token
 
 		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
 		http = Net::HTTP.new(uri.host, uri.port)
@@ -35,8 +38,8 @@ module Util
 		return parsed_response
 	end
 
-	def Util.create_sobject(object_name, data)
-		access_token = Util.get_access_token()
+	def self.create_sobject(object_name, data)
+		access_token = Util.get_access_token
 
 		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
 		puts uri
@@ -56,5 +59,17 @@ module Util
 			puts 'name not defined'
 			return Nil
 		end
+	end
+
+	def self.delete_sobject(object_name, object_id)
+		access_token = Util.get_access_token
+
+		uri = URI(@@base_url + '/data/v34.0/sobjects/'+ object_name + '/' + object_id)
+		puts uri
+		http = Net::HTTP.new(uri.host, uri.port)
+		request = Net::HTTP::Delete.new(uri.request_uri)
+		http.use_ssl = true
+		request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
+		res = http.request(request)
 	end
 end

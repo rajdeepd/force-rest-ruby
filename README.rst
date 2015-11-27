@@ -24,7 +24,7 @@ Update the TODO with appropriate values for client_id, client_secret username an
 
 Common Methods
 ==============
-File `util.rb` provides common methods for getting access token. Getting access token consists of following steps
+File :code:`util.rb` provides common methods for getting access token. Getting access token consists of following steps. We define a class Util in this file and add common methods as static in this file
 
 Get Access Token
 ^^^^^^^^^^^^^^^^
@@ -39,7 +39,7 @@ Get Access Token
 
 .. code-block:: ruby
 
-	def Util.get_access_token()
+	def self.get_access_token()
 		credentials = YAML.load(File.open("./config.yml"))['credentials']
 		uri = URI('https://ap2.salesforce.com//services/oauth2/token')
 		http = Net::HTTP.new(uri.host, uri.port)
@@ -63,19 +63,23 @@ We are using the base url :code:`https://ap2.salesforce.com/services/data/v34.0/
 
 .. code-block:: ruby
 
-	def Util.get_sobject_list(object_name)
-		access_token = Util.get_access_token()
-		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+	def self.get_access_token
+		credentials = YAML.load(File.open("./config.yml"))['credentials']
+		uri = URI('https://ap2.salesforce.com//services/oauth2/token')
 		http = Net::HTTP.new(uri.host, uri.port)
-		request = Net::HTTP::Get.new(uri.request_uri)
 		http.use_ssl = true
 
-		#'Authorization': 'Bearer ' + access_token
-		request.initialize_http_header({"Authorization" => "Bearer " + access_token}) 
-		response = http.request(request)
-		parsed_response =  JSON.parse(response.body)
-		return parsed_response
+		res = Net::HTTP.post_form(uri, 'grant_type' => 'password',
+			                           'client_id' => credentials['client_id'],
+		                               'client_secret' => credentials['client_secret'],
+		                               'username' => credentials['username'],
+		                               'password' => credentials['password'])
+		result = res.body
+		parsed = JSON.parse(result)
+        access_token = parsed['access_token']
+		return access_token
 	end
+
 Get Account List
 ================
 We created a new method in :code:`util.rb` :code:`Util.get_sobject_list(object_name)`. In this method we get the access token from  :code:`Util.get_access_token()` and use it make a POST request to the url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/Account`.
@@ -85,12 +89,11 @@ We created a new method in :code:`util.rb` :code:`Util.get_sobject_list(object_n
 	response = Util.get_sobject_list('Account')
 	pp response
 
-Exectute the program 
+Execute the program
 
 ::
 
 	$ ruby get_account_list.rb
-
 
 Create Account
 ==============
@@ -102,7 +105,7 @@ Detailed steps
  
   .. code-block:: ruby
 
-	access_token = Util.get_access_token()
+	access_token = self.get_access_token()
 
 
 2. Create a URI object :code:`uri` based on the object_name
@@ -133,7 +136,7 @@ Full code Listing of the method
 
 .. code-block:: ruby
 
-	def Util.create_sobject(object_name, data)
+	def self.create_sobject(object_name, data)
 		access_token = Util.get_access_token()
 
 		uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
@@ -156,4 +159,18 @@ Full code Listing of the method
 		end
 	end
 
+The method listed above is called as shown in the listing below in the file :code:`create_acciunt.rb`
+
+.. code-block:: ruby
+  class CreateAccount
+    def execute
+      data = Hash.new
+      data['name'] = "DHL1"
+      response = Util.create_sobject('Account', data)
+      puts response.body
+    end
+   end
+
+   createAccount = CreateAccount.new
+   createAccount.execute
 
