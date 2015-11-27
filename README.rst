@@ -183,3 +183,44 @@ The method listed above is called as shown in the listing below in the file :cod
   createAccount = CreateAccount.new
   createAccount.execute
 
+Delete Account
+==============
+We created a new method in Util class, :code:`self.delete_sobject(object_name, object_id)` which takes the :code:`object_name` and :code:`object_id`
+and makes a :code:`DELETE` method to the rest endpoint specified by :code:`@@base_url/<object_name>/<object_id>`
+
+.. code-block:: ruby
+
+	def self.delete_sobject(object_name, object_id)
+		access_token = Util.get_access_token
+
+		uri = URI(@@base_url + object_name + '/' + object_id)
+		puts uri
+		http = Net::HTTP.new(uri.host, uri.port)
+		request = Net::HTTP::Delete.new(uri.request_uri)
+		http.use_ssl = true
+		request.initialize_http_header({"Authorization" => "Bearer " + access_token})
+		res = http.request(request)
+		return res
+	end
+
+This function is called in :code:`DeleteAccount` class execute method as shown below
+
+.. code-block:: ruby
+
+  class DeleteAccount
+    def execute
+      account_id = '0012800000AaIZi'
+        sobject_name = 'Account'
+        response = Util.delete_sobject(sobject_name, account_id)
+        puts response
+    end
+  end
+  deleteAccount = DeleteAccount.new
+  deleteAccount.execute
+
+Execute the code
+
+::
+
+  $ ruby delete_account.rb
+
