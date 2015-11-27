@@ -4,14 +4,14 @@ This Repo provides samples on how to use Ruby to work with force.com REST APIs
 
 Setup
 ======
-Create a config.yml file from config_sample.yml file and fill in the values appropriately from salesforce developer account.
+Create a config.yml file from config_sample.yml file and fill in the values appropriately from salesforce.com developer account.
 
 ::
 
 	$ cp config_sample.yml config.yml
 	$ cat config_sample.yml 
 
-Update the TODO with appropriate values for client_id, client_secret username and password.
+Update the TODO with appropriate values for :code:`client_id`, :code:`client_secret`, :code:`username` and :code:`password`.
 
 ::
 
@@ -59,26 +59,28 @@ Get Access Token
 Get List of SObjects
 ^^^^^^^^^^^^^^^^^^^^
 Url used to make request depends on the instance where your account was created ( na1, na2, ap1, ap2 etc) as well the version of the API being used.
-We are using the base url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/`. The function Util.get_sobject_list(object_name) takes the object name for which list has to be created (Account, Contact etc).
+We are using the base url :code:`https://ap2.salesforce.com/services/data/v34.0/sobjects/`.
+
+The function :code:`self.get_sobject_list(object_name)` takes the object name for which list has to be created (Account, Contact etc). A HTTPs Get request is made
+to the URL listed above appended by the :code:`object_name`. Header of the HTTP request has Access token set
+
 
 .. code-block:: ruby
 
-	def self.get_access_token
-		credentials = YAML.load(File.open("./config.yml"))['credentials']
-		uri = URI('https://ap2.salesforce.com//services/oauth2/token')
-		http = Net::HTTP.new(uri.host, uri.port)
-		http.use_ssl = true
+    def self.get_sobject_list(object_name)
+      access_token = Util.get_access_token
 
-		res = Net::HTTP.post_form(uri, 'grant_type' => 'password',
-			                           'client_id' => credentials['client_id'],
-		                               'client_secret' => credentials['client_secret'],
-		                               'username' => credentials['username'],
-		                               'password' => credentials['password'])
-		result = res.body
-		parsed = JSON.parse(result)
-        access_token = parsed['access_token']
-		return access_token
-	end
+      uri = URI('https://ap2.salesforce.com/services/data/v34.0/sobjects/'+ object_name)
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Get.new(uri.request_uri)
+      http.use_ssl = true
+
+      #'Authorization': 'Bearer ' + access_token
+      request.initialize_http_header({"Authorization" => "Bearer " + access_token})
+      response = http.request(request)
+      parsed_response =  JSON.parse(response.body)
+      return parsed_response
+    end
 
 Get Account List
 ================
@@ -86,10 +88,17 @@ We created a new method in :code:`util.rb` :code:`Util.get_sobject_list(object_n
 
 .. code-block:: ruby
 
-	response = Util.get_sobject_list('Account')
-	pp response
+    class AccountList
+      def get
+        response = Util.get_sobject_list('Account')
+        pp response
+      end
+    end
 
-Execute the program
+accountList = AccountList.new
+accountList.get
+
+Execute the program, It will return the list of Accounts created in the salesforce.com instance.
 
 ::
 
